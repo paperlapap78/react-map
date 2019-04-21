@@ -44,8 +44,7 @@ export default class Map extends Component {
     })
   }
 
-  _renderMarker(location, index) {
-
+  renderMarker(location, index) {
     return (
         <img className="marker"
              onClick={(e) => this.onMarkerClick(index, e)}
@@ -57,7 +56,7 @@ export default class Map extends Component {
     )
   }
 
-  _renderLocationDetails() {
+  renderLocationDetails() {
     return (
         <LocationDetails locationDetails={this.state.mapLocationData[this.state.selectedMarker]} />
     )
@@ -69,19 +68,17 @@ export default class Map extends Component {
       mapLocationData,
       isMarkerSelected
     } = this.state;
-
     return (
       <div className="map">
         <img className="background-map"
              src={backgroundMap}
              onClick={this.onMapClick}
-             alt="Map"/>
-        {
-          mapLocationData.map((location, index) =>
-            this._renderMarker(location, index))
-        }
+             alt="Map"
+        />
 
-        { isMarkerSelected && this._renderLocationDetails() }
+        { mapLocationData.map((location, index) => this.renderMarker(location, index)) }
+
+        { isMarkerSelected && this.renderLocationDetails() }
       </div>
     );
   }

@@ -12,18 +12,18 @@ describe('Map component', () => {
     { position: [10, 10] },
     { position: [20, 20] }
   ];
-  jest.mock('../../Service/BackgroundMapService');
-  jest.mock('../../Service/MapDataService');
   let mockMapGet;
   let mockMapDataGet;
   let wrapper;
   let component;
 
   beforeAll(() => {
+    jest.mock('../../Service/BackgroundMapService');
     mockMapGet = jest.fn();
     mockMapGet.mockResolvedValue('mapImg.jpg');
     BackgroundMapService.get = mockMapGet.bind(BackgroundMapService);
 
+    jest.mock('../../Service/MapDataService');
     mockMapDataGet = jest.fn();
     mockMapDataGet.mockResolvedValue(mockData);
     MapDataService.get = mockMapDataGet.bind(MapDataService);
@@ -56,5 +56,12 @@ describe('Map component', () => {
     wrapper.find('img.marker').first().simulate('click');
     component = wrapper.find(LocationDetails);
     expect(component).toExist();
-  })
+  });
+
+  it('closes location details component when map is clicked', () => {
+    wrapper.find('img.marker').first().simulate('click');
+    wrapper.find('img.background-map').simulate('click');
+    component = wrapper.find(LocationDetails);
+    expect(component).not.toExist();
+  });
 });
