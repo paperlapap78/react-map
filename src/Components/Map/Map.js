@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
 
-import backgroundMap from './background-map.jpg';
-import marker from './marker.png';
-import markerSelected from './marker-selected.png';
+import BackgroundMapService from '../../Service/BackgroundMapService'
+import MapDataService from '../../Service/MapDataService'
+import LocationDetails from './LocationDetails/LocationDetails'
 
-import mapData from './map-data.json';
+import markerImg from './marker.png';
+import markerSelectedImg from './marker-selected.png';
 
 import './Map.css';
 
@@ -12,33 +13,43 @@ export default class Map extends Component {
 
   constructor(props) {
     super(props);
-
-    console.log(mapData);
-
-    this.markerClick = this.markerClick.bind(this);
-    this.mapClick = this.mapClick.bind(this);
-
     this.state = {
+      backgroundMap: null,
+      mapLocationData: [],
+      isMarkerSelected: false,
       selectedMarker: null
-    }
+    };
+    this.onMarkerClick = this.onMarkerClick.bind(this);
+    this.onMapClick = this.onMapClick.bind(this);
   }
 
-  mapClick() {
-    console.log('map clicked');
-    this.setState({ selectedMarker: null })
+  componentDidMount() {
+    BackgroundMapService.get()
+      .then(backgroundMap => this.setState({ backgroundMap }));
+    MapDataService.get()
+      .then(mapLocationData => this.setState({ mapLocationData }));
   }
 
-  markerClick(index) {
-    console.log('clicked ', index);
-    this.setState({ selectedMarker: index })
-
+  onMapClick() {
+    this.setState({
+      isMarkerSelected: false,
+      selectedMarker: null
+    })
   }
 
-  renderMarker(location, index) {
+  onMarkerClick(index) {
+    this.setState({
+      isMarkerSelected: true,
+      selectedMarker: index
+    })
+  }
+
+  _renderMarker(location, index) {
+
     return (
         <img className="marker"
-             onClick={(e) => this.markerClick(index, e)}
-             src={this.state.selectedMarker === index ? markerSelected : marker}
+             onClick={(e) => this.onMarkerClick(index, e)}
+             src={this.state.selectedMarker === index ? markerSelectedImg : markerImg}
              style={{left: location.position[0], top: location.position[1]}}
              alt={location.name}
              key={index}
@@ -46,18 +57,31 @@ export default class Map extends Component {
     )
   }
 
+  _renderLocationDetails() {
+    return (
+        <LocationDetails locationDetails={this.state.mapLocationData[this.state.selectedMarker]} />
+    )
+  }
+
   render() {
+    const {
+      backgroundMap,
+      mapLocationData,
+      isMarkerSelected
+    } = this.state;
+
     return (
       <div className="map">
-
-        <img src={backgroundMap}
-             onClick={this.mapClick}
+        <img className="background-map"
+             src={backgroundMap}
+             onClick={this.onMapClick}
              alt="Map"/>
         {
-          mapData.map((location, index) =>
-             this.renderMarker(location, index)
-          )
+          mapLocationData.map((location, index) =>
+            this._renderMarker(location, index))
         }
+
+        { isMarkerSelected && this._renderLocationDetails() }
       </div>
     );
   }

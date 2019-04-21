@@ -1,0 +1,20 @@
+.location-details {
+    position: absolute;
+    background: floralwhite;
+    top: 25px;
+    right: 25px;
+    padding: 0.5em;
+}
+
+.location-details-dt {
+    font-weight: bold;
+    float: left;
+    clear: left;
+    width: 100px;
+}
+
+.location-details-dd {
+    margin: 0 0 0 110px;
+    padding: 0 0 0.5em 0;
+}
+
